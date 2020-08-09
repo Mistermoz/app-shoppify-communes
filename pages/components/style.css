@@ -1,0 +1,22 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+.tableCommune-container {
+  width: 100%;
+}
+.tableCommune-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #ccc;
+}
+
+.tableCommune-col {
+  color: #000;
+  flex: 1 1;
+  padding: 10px;
+}
+
+header.tableCommune-row .tableCommune-col {
+  font-weight: 900;
+}
