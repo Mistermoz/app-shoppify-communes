@@ -1,0 +1,161 @@
+{
+  "regions": [
+    {
+      "name": "Metropolitana de Santiago",
+      "ID": "1",
+      "communes": [
+        {
+          "name": "Providencia",
+          "ID": "1"
+        },
+        {
+          "name": "Las Condes",
+          "ID": "2"
+        },
+        {
+          "name": "La Florida",
+          "ID": "3"
+        },
+        {
+          "name": "Macul",
+          "ID": "4"
+        },
+        {
+          "name": "Santiago",
+          "ID": "5"
+        }
+      ]
+    },
+    {
+      "name": "Maule",
+      "ID": "2",
+      "communes": [
+        {
+          "name": "Talca",
+          "ID": "1"
+        },
+        {
+          "name": "Curico",
+          "ID": "2"
+        },
+        {
+          "name": "Linares",
+          "ID": "3"
+        }
+      ]
+    },
+    {
+      "name": "Bio Bio",
+      "ID": "3",
+      "communes": [
+        {
+          "name": "Concepción",
+          "ID": "9"
+        },
+        {
+          "name": "Linares",
+          "ID": "10"
+        },
+        {
+          "name": "Chillán",
+          "ID": "11"
+        }
+      ]
+    }
+  ],
+  "configurations": [
+    {
+      "regions": [
+        {
+          "name": "Metropolitana de Santiago",
+          "ID": "1",
+          "communes": [
+            {
+              "name": "Providencia",
+              "ID": "1",
+              "options": [
+                {
+                  "id": "1",
+                  "price": "4990",
+                  "text": "normal"
+                }
+              ]
+            },
+            {
+              "name": "Las Condes",
+              "ID": "2",
+              "options": [
+                {
+                  "id": "1",
+                  "price": "3990",
+                  "text": "normal"
+                }
+              ]
+            },
+            {
+              "name": "La Florida",
+              "ID": "3",
+              "options": [
+                {
+                  "id": "1",
+                  "price": "5000",
+                  "text": "normal"
+                }
+              ]
+            },
+            {
+              "name": "Macul",
+              "ID": "4",
+              "options": [
+                {
+                  "id": "1",
+                  "price": "5000",
+                  "text": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maule",
+          "ID": "2",
+          "communes": [
+            {
+              "name": "Talca",
+              "ID": "6",
+              "options": [
+                {
+                  "id": "8",
+                  "price": "15000",
+                  "text": "normal"
+                }
+              ]
+            },
+            {
+              "name": "Curico",
+              "ID": "7",
+              "options": [
+                {
+                  "id": "9",
+                  "price": "15000",
+                  "text": "normal"
+                }
+              ]
+            },
+            {
+              "name": "Linares",
+              "ID": "8",
+              "options": [
+                {
+                  "id": "10",
+                  "price": "15000",
+                  "text": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

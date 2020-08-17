@@ -1,0 +1,30 @@
+[
+  {
+    "id": "16",
+    "region": "Metropolitana de santiago",
+    "communes": [
+      {
+        "name": "Las Condes",
+        "id": "1",
+      },
+      {
+        "name": "Providencia",
+        "id": "2",
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "region": "Región de Ohiggins",
+    "communes": [
+      {
+        "name": "Rancagua",
+        "id": "13",
+      },
+      {
+        "name": "Rengo",
+        "id": "14",
+      }
+    ]
+  }
+]
