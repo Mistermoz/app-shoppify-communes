@@ -17,13 +17,17 @@ class Index extends React.Component {
     this.state = {
       open: false, 
       communes: [],
+      communesServer: [],
       buttonState: {},
       regions: [],
       priceDefault: '4990',
       textDefualt: 'Normal'
     };
 
+    //this.endPoint = 'https://appdespachochile.ddns.net/shop/pruebaziru-app.myshopify.com/configurations';
+    this.endPoint = '/data/configurations.json';
     this.getData();
+    this.origin = 'https://5dcf8e1b5883.ngrok.io';
   }
 
   addCommunesSelected = (options) => {
@@ -51,7 +55,7 @@ class Index extends React.Component {
               ]
             });
 
-            newButtonsState[communeSelected.id] = true;
+            newButtonsState[communeSelected.id] = false;
           }
         });
       }
@@ -75,7 +79,7 @@ class Index extends React.Component {
           }
         );
 
-        newButtonsState[communeSelected.id] = true;
+        newButtonsState[communeSelected.id] = false;
       });
 
       newCommunes.push({
@@ -91,7 +95,9 @@ class Index extends React.Component {
   getData = () => {
     const that = this;
 
-    fetch("/data/configurations.json")
+    //this.testApi();
+
+    /*fetch(that.endPoint)
       .then(function(response) {
         return response.json();
       })
@@ -101,14 +107,57 @@ class Index extends React.Component {
 
         that.setState({
           buttonState: that.setButtonState(conf),
+          communesServer: JSON.parse(JSON.stringify(conf)),
           communes: conf,
           regions: regs,
         });
-      });
+      });*/
   };
 
+  testApi = () => {
+    var fetchUrlTheme = `${this.origin}/api/themes`;
+
+    var method = "GET";
+    fetch(fetchUrlTheme, {
+        method: method
+    })
+    .then(response => response.json())
+    .then(json => this.getAsset(json.data.themes[0]));
+  }
+
+  getAsset = (theme) => {
+    const urlAsset = `${this.origin}/api/themes/${theme.id}/assets`;
+    const method = 'GET';
+
+    fetch(urlAsset, {
+        method,
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+  }
+
+  putAsset = (theme) => {
+    const urlAsset = `${this.origin}/api/themes/${theme.id}/assets`;
+    const method = 'PUT';
+
+    const body = {
+      "asset": {
+        "key": "snippets/appdespachochile-cart.liquid",
+        "value": "<img src='backsoon-postit.png'><p>We are busy updating the store for you and will be back within the hour.</p>"
+      }
+    };
+
+    fetch(urlAsset, {
+        method,
+        body: JSON.stringify(body)
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+  }
+
   handleChange = () => {
-    this.setState({ open: !this.state.open });
+    this.testApi();
+    //this.setState({ open: !this.state.open });
   };
 
   setButtonState = (regions) => {
@@ -129,7 +178,11 @@ class Index extends React.Component {
     }
 
     return (
-      <TableCommunes communes={this.state.communes} buttonState={this.state.buttonState}></TableCommunes>
+      <TableCommunes
+        communes={this.state.communes}
+        communesServer={this.state.communesServer}
+        buttonState={this.state.buttonState}
+      ></TableCommunes>
     )
   };
 

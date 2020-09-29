@@ -1,0 +1,210 @@
+<script type="text/javascript">
+  const urlCheckout = window.location.origin + '/cart/#products#?checkout[shipping_address][city]=#City#';
+  let checkoutUrl = '';
+  let conf = [];
+  let regs = [];
+  let selectReg = '';
+  let selectCommune = '';
+  let buttonSubmit = '';
+  let regionSelected = -1;
+  let communeName = '';
+
+  const sortObjectByName = (communes) => {
+    return communes.sort(function (a, b) {
+      const x = spanishSortEqualizer(a.name);
+      const y = spanishSortEqualizer(b.name);
+
+      if (x > y) {
+        return 1;
+      }
+      if (x < y) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
+  const spanishSortEqualizer = (str) => {
+
+    let eqStr = str.toLowerCase()
+    let equalizables = { 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u', 'ñ':'nz', ' ':'' }
+
+    eqStr = eqStr.replace( new RegExp(Object.keys(equalizables).join('|'),'g'), (match)=>equalizables[match] )
+
+    return eqStr
+  }
+
+const setUrl = (products) => {
+    const cartContents = fetch('/cart.js')
+    .then(response => response.json())
+    .then(data => {
+      const products = data.items;
+      let productUrl = '';
+      
+      products.forEach((product, index) => {
+      productUrl += `${product.variant_id}:${product.quantity}`;
+    
+      if (index + 1 < products.length) {
+        productUrl += ',';
+      }	
+    });
+      
+      checkoutUrl = urlCheckout.replace('#products#', productUrl);
+    checkoutUrl = checkoutUrl.replace('#City#', communeName);
+      
+      window.location.assign(checkoutUrl);
+    });
+}
+
+const hideCartButton = () => {
+   const el = document.querySelector('.cart__submit[type="submit"]');
+
+    el.style.display = 'none';
+}
+  
+  const handleSubmitCheckout = (e) => {
+    e.preventDefault();
+    setUrl();
+  }
+  
+  const getData = () => {
+    const confUrl = `/apps/appdespachochile/configurations`;
+    
+    fetch(`${confUrl}`)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(myJson) {
+      if (typeof myJson.error == 'undefined') {
+        conf = myJson.configurations[0].regions;
+        regs = myJson.regions;
+
+        addDataRegion();
+      } else {
+        console.log(myJson.error);
+      }
+    });
+  }
+
+  const addDataRegion = () => {
+    if (regs.length > 0) {
+      regs.forEach((region) => {
+        selectReg.options[selectReg.options.length] = new Option(`Región de ${region.name}`, region.id);
+      });
+    }
+  }
+
+  const handleRegionSelect = (id) => {
+    selectCommune.length = 0;
+    selectCommune.options[0] = new Option(`Seleccionar comuna`, 'default', true, true);
+    selectCommune.options[0].setAttribute('disabled', 'disabled');
+    regionSelected = id;
+    
+    regs.forEach((region) => {
+      if (region.id === id.toString()) {
+        const communes = sortObjectByName(region.communes);
+        
+        communes.forEach((commune) => {
+          selectCommune.options[selectCommune.options.length] = new Option(`${commune.name}`, commune.id);
+        });
+      }
+    });
+  }
+  
+  const handleCommuneSelect = (id) => {
+    let message = 'No hay envíos a esta comuna';
+    
+    if (conf.length < 0) {
+      setMessage(message);
+      
+      return 0;
+    }
+
+    conf.forEach((region) => {
+      if (region.id === regionSelected) {
+        region.communes.forEach((commune) => {
+          if (commune.id === id) {
+            const price = commune.options[0].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            message = `${commune.options[0].description} - ${price}`;
+            communeName = commune.name;
+            
+            buttonSubmit.disabled = false;
+          }
+        });
+      } 
+    });
+
+    
+    setMessage(message);
+    
+    return 1;
+  }
+  
+  const setMessage = (msg) => {
+    let option = document.getElementById("optionSelected");
+    
+    option.innerHTML = msg;
+  }
+  
+
+  window.onload = () => {
+    selectReg = document.getElementById("priceRegions");
+    selectCommune = document.getElementById("priceCommunes");
+    buttonSubmit = document.getElementById("priceCommunes-button");
+    
+    selectCommune.options[0].setAttribute('selected', 'selected');
+    selectReg.options[0].setAttribute('selected', 'selected');
+    selectCommune.options[0].disabled = true;
+    selectReg.options[0].disabled = true
+    
+    selectReg.addEventListener("change", function (e) {
+      if (e.target.value != 'default') {
+        handleRegionSelect(e.target.value);
+      }
+    });
+    
+    selectCommune.addEventListener("change", function (e) {
+      if (e.target.value != 'default') {
+        handleCommuneSelect(e.target.value);
+      }
+    });
+    
+    
+    buttonSubmit.addEventListener("click", function (e) {
+      handleSubmitCheckout(e);
+    });
+
+    getData();
+  }
+
+  hideCartButton();
+</script>
+
+<div class="priceCommunes--show">
+<div class="priceCommunes-container">
+  <div class="priceCommunes-regions">
+    <select id="priceRegions"
+            class="priceCommunes-select priceCommunes-regions">
+      <option value="default">Seleccionar región</option>
+    </select>
+  </div>
+
+  <div class="priceCommunes-communes">
+    <select id="priceCommunes" class="priceCommunes-select">
+      <option value="default">Debe seleccionar región</option>
+    </select>
+  </div>
+
+  <div class="priceCommunes-options">
+    <input type="radio" value="" class="priceCommunes-radio-option" checked/>
+    <label id="optionSelected" for="male"></label><br>
+  </div>
+
+  <div className="priceCommunes-button">
+    <button id="priceCommunes-button" class="cart__submit btn btn--small-wide" disabled>
+      {{ 'cart.general.checkout' | t }}
+    </button>
+  </div>
+</div>
+</div>

@@ -10,6 +10,7 @@ class TableCommunes extends React.Component {
     super(props)
     this.state = {
       communes: props.communes,
+      server: this.props.communesServer,
       buttonDisabled: props.buttonState,
     };
   };
@@ -21,34 +22,39 @@ class TableCommunes extends React.Component {
   handleChange = (e) => {
     const {indexreg, indexcommune, type } = e.target.dataset;
     const newCommunes = this.state.communes;
+    const oldCommunes = this.state.server;
     const newVal = e.target.value;
     const communeID = newCommunes[indexreg].communes[indexcommune].ID;
     const buttonsDisabled = this.state.buttonDisabled;
-
-    if (!Number(newVal)) {
+  
+    if (newVal !== '' && !Number(newVal)) {
         return;
     }
 
+    if (oldCommunes[indexreg] && oldCommunes[indexreg].communes[indexcommune]) {
+      const oldVal = oldCommunes[indexreg].communes[indexcommune].options[0][type];
+      buttonsDisabled[communeID] = (newVal !== oldVal) ? false : true;
+    }    
+
     newCommunes[indexreg].communes[indexcommune].options[0][type] = newVal;
-    buttonsDisabled[communeID] = false;
 
     this.setState({
-      newCommunes,
+      communes: newCommunes,
       buttonsDisabled
     });
   };
 
   renderTableData = (communes, indRegion) => {
     return communes.map((commune, indCommune) => {
-       const { ID, name } = commune;
+       const { id, name } = commune;
 
        return (
-          <div className="tableCommune-row" key={ID}>
+          <div className="tableCommune-row" key={id}>
             <div className="tableCommune-col col1">{name}</div>
             <div className="tableCommune-col col2">
               <input
                 type="text"
-                value={this.state.communes[indRegion].communes[indCommune].options[0].price}
+                value={commune.options[0].price}
                 data-indexreg={indRegion}
                 data-indexcommune={indCommune}
                 data-type="price"
@@ -57,7 +63,7 @@ class TableCommunes extends React.Component {
             <div className="tableCommune-col col3">
               <input
                   type="text"
-                  value={this.state.communes[indRegion].communes[indCommune].options[0].text}
+                  value={commune.options[0].text}
                   data-indexreg={indRegion}
                   data-indexcommune={indCommune}
                   data-type="text"
@@ -68,8 +74,8 @@ class TableCommunes extends React.Component {
               <Button>Borrar</Button>
               <Button
                 primary
-                onClick={() => this.sumbitCommune(ID, indRegion)}
-                disabled={this.state.buttonDisabled[ID]}
+                onClick={() => this.sumbitCommune(id, indRegion)}
+                disabled={this.state.buttonDisabled[id]}
               >
                 Guardar
               </Button>
@@ -82,9 +88,9 @@ class TableCommunes extends React.Component {
   
   renderRegionData = () => {
     return this.state.communes.map((data, index) => {
-      const {ID, name, communes} = data;
+      const {id, name, communes} = data;
       return (
-        <div className="region-row" key={ID}>
+        <div className="region-row" key={id}>
           <Heading>{name}</Heading>
           <header className="tableCommune-row">
             <div className="tableCommune-col col1">Comuna</div>
