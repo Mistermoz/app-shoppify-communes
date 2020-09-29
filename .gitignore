@@ -25,3 +25,5 @@ test/**/next-env.d.ts
 #ssl
 *.crt
 *.key
+
+.env
