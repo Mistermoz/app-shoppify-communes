@@ -27,7 +27,11 @@ class Index extends React.Component {
     //this.endPoint = 'https://appdespachochile.ddns.net/shop/pruebaziru-app.myshopify.com/configurations';
     this.endPoint = '/data/configurations.json';
     this.getData();
-    this.origin = 'https://5dcf8e1b5883.ngrok.io';
+    this.origin = '';
+  }
+
+  componentDidMount() {
+    this.setState({origin: window.location.origin})
   }
 
   addCommunesSelected = (options) => {
@@ -95,9 +99,7 @@ class Index extends React.Component {
   getData = () => {
     const that = this;
 
-    //this.testApi();
-
-    /*fetch(that.endPoint)
+    fetch(that.endPoint)
       .then(function(response) {
         return response.json();
       })
@@ -111,7 +113,7 @@ class Index extends React.Component {
           communes: conf,
           regions: regs,
         });
-      });*/
+      });
   };
 
   testApi = () => {
@@ -125,30 +127,69 @@ class Index extends React.Component {
     .then(json => this.getAsset(json.data.themes[0]));
   }
 
-  getAsset = (theme) => {
-    const urlAsset = `${this.origin}/api/themes/${theme.id}/assets`;
-    const method = 'GET';
+  addScript = () => {
+     const urlAsset = `${this.origin}/api/script/script_tags`;
+    const method = 'POST';
+    const body = {
+      "script_tag": {
+        "event": "onload",
+        "src": "https://d5a0f90f679a.ngrok.io/js/test.js"
+      }
+    };
 
     fetch(urlAsset, {
-        method,
+      method,
+      body: JSON.stringify(body)
     })
     .then(response => response.json())
     .then(json => console.log(json));
   }
 
-  putAsset = (theme) => {
+  getAsset = (theme) => {
+    const urlAsset = `${this.origin}/api/themes/${theme.id}/assets`;
+    const method = 'GET';
+    let temp = '';
+
+    fetch(urlAsset, {
+      method,
+    })
+    .then(response => response.json())
+    .then(json => {
+      temp = JSON.parse(json);
+      console.log(temp);
+
+      this.putAsset(theme, temp);
+    });
+  }
+
+  putAsset = (theme, temp) => {
     const urlAsset = `${this.origin}/api/themes/${theme.id}/assets`;
     const method = 'PUT';
+    const template = {...temp};
+
+    template.shopify = {
+      checkout: {
+        contact: {
+          "city_label": "Comuna",
+          "city_placeholder": "Comuna",
+          "postal_code_label": "Ciudad",
+          "postal_code_placeholder": "Ciudad",
+        }
+      }
+    };
 
     const body = {
       "asset": {
-        "key": "snippets/appdespachochile-cart.liquid",
-        "value": "<img src='backsoon-postit.png'><p>We are busy updating the store for you and will be back within the hour.</p>"
+        "key": "locales/es.json",
+        "value": JSON.stringify(template)
       }
     };
 
     fetch(urlAsset, {
         method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(body)
     })
     .then(response => response.json())
@@ -156,8 +197,11 @@ class Index extends React.Component {
   }
 
   handleChange = () => {
+    this.setState({ open: !this.state.open });
+  };
+
+  handleApi = () => {
     this.testApi();
-    //this.setState({ open: !this.state.open });
   };
 
   setButtonState = (regions) => {
@@ -221,6 +265,10 @@ class Index extends React.Component {
               <Heading element="h1">Comunas con despacho</Heading>
               <div className="buttonAgregar">
                 <Button primary onClick={this.handleChange}>Agregar a la lista</Button>
+              </div>
+
+              <div className="buttonAgregar">
+                <Button primary onClick={this.handleApi}>Test Api</Button>
               </div>
               <Card>
                 { this.showTable() }
