@@ -56,11 +56,11 @@ app.prepare().then(() => {
           headers: {
             "X-Shopify-Access-Token": ctx.cookies.get('accessToken'),
           },
-      })
-          .then(response => response.json())
-          .then(json => {
-              return json;
-          });
+        })
+        .then(response => response.json())
+        .then(json => {
+            return json;
+        });
       ctx.body = {
           status: 'success',
           data: results
@@ -78,13 +78,12 @@ app.prepare().then(() => {
           headers: {
             "X-Shopify-Access-Token": ctx.cookies.get('accessToken'),
           },
-          })
-          .then(response => response.json())
-          .then(json => {
-              template = json;
-              console.log(template);
-              return json;
-          });
+        })
+        .then(response => response.json())
+        .then(json => {
+            template = json;
+            return json;
+        });
       ctx.body = {
           status: 'success',
           data: results
@@ -95,13 +94,6 @@ app.prepare().then(() => {
   });
 
   router.post('/api/script/:object', koaBody(), async (ctx) => {
-    const body = {
-      "script_tag": {
-        "event": "onload",
-        "display_scope": "online_store",
-        "src": "https://684cb14b0156.ngrok.io/js/appcommuneschile.min.js"
-      }
-    };
     try {
       const results = await fetch("https://" + ctx.cookies.get('shopOrigin') + "/admin/api/2020-07/" + ctx.params.object + ".json", {
           method: 'POST',
@@ -109,12 +101,12 @@ app.prepare().then(() => {
             "X-Shopify-Access-Token": ctx.cookies.get('accessToken'),
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify(ctx.request.body),
         })
-          .then(response => response.json())
-          .then(json => {
-              return json;
-          });
+        .then(response => response.json())
+        .then(json => {
+            return json;
+        });
       ctx.body = {
           status: 'success',
           data: results
@@ -125,17 +117,9 @@ app.prepare().then(() => {
   });
 
   router.put('/api/themes/:id/assets', koaBody(), async (ctx) => {
-    fs = require('fs');
-    let cart = fs.readFileSync(__dirname+'/pages/cart.liquid', 'utf8');
-    const temp = template.asset.value.replace('Comuna', 'Comunidad');
+    /*fs = require('fs');
+    let cart = fs.readFileSync(__dirname+'/pages/cart.liquid', 'utf8');*/
 
-    const body =  {
-      "asset": {
-        "key": "locales/es.json",
-        "value": temp
-      }
-    };
-    
     try {
       const results = await fetch("https://" + ctx.cookies.get('shopOrigin') + "/admin/api/2020-07/themes/" + ctx.params.id + "/assets.json", {
           method: 'PUT',
@@ -145,10 +129,10 @@ app.prepare().then(() => {
           },
           body: JSON.stringify(ctx.request.body),
         })
-          .then(response => response.json())
-          .then(json => {
-              return json;
-          });
+        .then(response => response.json())
+        .then(json => {
+            return json;
+        });
       ctx.body = {
           status: 'success',
           data: results

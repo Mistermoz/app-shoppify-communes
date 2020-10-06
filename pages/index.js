@@ -128,17 +128,20 @@ class Index extends React.Component {
   }
 
   addScript = () => {
-     const urlAsset = `${this.origin}/api/script/script_tags`;
+    const urlAsset = `${this.origin}/api/script/script_tags`;
     const method = 'POST';
     const body = {
       "script_tag": {
         "event": "onload",
-        "src": "https://d5a0f90f679a.ngrok.io/js/test.js"
+        "src": `${this.origin}/js/test.js`
       }
     };
 
     fetch(urlAsset, {
       method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(body)
     })
     .then(response => response.json())
